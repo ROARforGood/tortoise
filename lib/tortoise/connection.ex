@@ -50,7 +50,7 @@ defmodule Tortoise.Connection do
     server = connection_opts |> Keyword.fetch!(:server) |> Transport.new()
 
     IO.inspect(Keyword.get(connection_opts, :keep_alive, 60),
-      label: "#{__ENV__.function} keep-alive ==="
+      label: "keep-alive ***"
     )
 
     connect = %Package.Connect{
