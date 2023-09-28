@@ -61,6 +61,7 @@ defmodule Tortoise.Connection.Controller do
 
   @spec ping(Tortoise.client_id()) :: {:ok, reference()}
   def ping(client_id) do
+    IO.inspect(client_id, label: "#{__ENV__.function} client_id ---")
     ref = make_ref()
     :ok = GenServer.cast(via_name(client_id), {:ping, {self(), ref}})
     {:ok, ref}
@@ -138,7 +139,7 @@ defmodule Tortoise.Connection.Controller do
   end
 
   def handle_cast({:ping, caller}, state) do
-    with {:ok, {transport, socket}} <- Connection.connection(state.client_id) do
+    with {:ok, {transport, socket}} <- Connection.connection(state.client_id, {:timeout, 500}) do
       time = System.monotonic_time(:microsecond)
       apply(transport, :send, [socket, Package.encode(%Package.Pingreq{})])
       ping = :queue.in({caller, time}, state.ping)

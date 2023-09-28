@@ -342,6 +342,7 @@ defmodule Tortoise.Connection do
 
       {:ok, :connecting} ->
         timeout = Keyword.get(opts, :timeout, :infinity)
+        IO.inspect(timeout, label: "#{__ENV__.function} timeout ---")
 
         receive do
           {{Tortoise, ^client_id}, :connection, {transport, socket}} ->
