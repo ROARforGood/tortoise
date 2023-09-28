@@ -471,6 +471,7 @@ defmodule Tortoise.Connection do
   def handle_info(:ping, %State{} = state) do
     case Controller.ping_sync(state.connect.client_id, 5000) do
       {:ok, round_trip_time} ->
+        IO.inspect(round_trip_time, label: "#{__ENV__.function} round_trip_time ===")
         Events.dispatch(state.connect.client_id, :ping_response, round_trip_time)
         state = reset_keep_alive(state)
         {:noreply, state}
