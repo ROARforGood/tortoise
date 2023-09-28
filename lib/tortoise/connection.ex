@@ -342,7 +342,7 @@ defmodule Tortoise.Connection do
 
       {:ok, :connecting} ->
         timeout = Keyword.get(opts, :timeout, :infinity)
-        Logger.info("MFA - #{inspect(__ENV__.function)} timeout - #{timeout}")
+        Logger.info("MFA - #{inspect(__ENV__.function)} timeout - #{inspect(timeout)}")
 
         receive do
           {{Tortoise, ^client_id}, :connection, {transport, socket}} ->
