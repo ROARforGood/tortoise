@@ -59,7 +59,7 @@ defmodule Tortoise.Events do
   @doc false
   @spec dispatch(Tortoise.client_id(), type :: atom(), value :: term()) :: :ok
   def dispatch(client_id, type, value) when type in @types do
-    IO.inspect(type, label: "#{inspect(__ENV__.function)} type --=")
+    # IO.inspect(type, label: "#{inspect(__ENV__.function)} type --=")
     :ok =
       Registry.dispatch(__MODULE__, type, fn subscribers ->
         for {pid, filter} <- subscribers,
