@@ -49,6 +49,10 @@ defmodule Tortoise.Connection do
     client_id = Keyword.fetch!(connection_opts, :client_id)
     server = connection_opts |> Keyword.fetch!(:server) |> Transport.new()
 
+    IO.inspect(Keyword.get(connection_opts, :keep_alive, 60),
+      label: "tortoise connection keep-alive ==="
+    )
+
     connect = %Package.Connect{
       client_id: client_id,
       user_name: Keyword.get(connection_opts, :user_name),

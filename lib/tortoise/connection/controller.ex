@@ -68,6 +68,7 @@ defmodule Tortoise.Connection.Controller do
 
   @spec ping_sync(Tortoise.client_id(), timeout()) :: {:ok, reference()} | {:error, :timeout}
   def ping_sync(client_id, timeout \\ :infinity) do
+    IO.inspect(timeout, label: "== ping_sync timeout ==")
     {:ok, ref} = ping(client_id)
 
     receive do
