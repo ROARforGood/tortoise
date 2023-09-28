@@ -255,10 +255,10 @@ defmodule Tortoise do
                | {:identifier, package_identifier()}
                | {:timeout, non_neg_integer()}
   def publish(client_id, topic, payload \\ nil, opts \\ []) do
-    IO.inspect(client_id, label: "#{__ENV__.function} client_id===")
-    IO.inspect(topic, label: "#{__ENV__.function} topic ===")
-    IO.inspect(payload, label: "#{__ENV__.function} payload===")
-    IO.inspect(opts, label: "#{__ENV__.function} opts===")
+    IO.inspect(client_id, label: "#{inspect(__ENV__.function)} client_id===")
+    IO.inspect(topic, label: "#{inspect(__ENV__.function)} topic ===")
+    IO.inspect(payload, label: "#{inspect(__ENV__.function)} payload===")
+    IO.inspect(opts, label: "#{inspect(__ENV__.function)} opts===")
     qos = Keyword.get(opts, :qos, 0)
 
     publish = %Package.Publish{

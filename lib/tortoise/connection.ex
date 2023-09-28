@@ -342,7 +342,7 @@ defmodule Tortoise.Connection do
 
       {:ok, :connecting} ->
         timeout = Keyword.get(opts, :timeout, :infinity)
-        IO.inspect(timeout, label: "#{__ENV__.function} timeout ---")
+        IO.inspect(timeout, label: "#{inspect(__ENV__.function)} timeout ---")
 
         receive do
           {{Tortoise, ^client_id}, :connection, {transport, socket}} ->
@@ -469,10 +469,10 @@ defmodule Tortoise.Connection do
   end
 
   def handle_info(:ping, %State{} = state) do
-    IO.inspect(state, label: "#{__ENV__.function} state --=")
+    IO.inspect(state, label: "#{inspect(__ENV__.function)} state --=")
     case Controller.ping_sync(state.connect.client_id, 5000) do
       {:ok, round_trip_time} ->
-        IO.inspect(round_trip_time, label: "#{__ENV__.function} round_trip_time ===")
+        IO.inspect(round_trip_time, label: "#{inspect(__ENV__.function)} round_trip_time ===")
         Events.dispatch(state.connect.client_id, :ping_response, round_trip_time)
         state = reset_keep_alive(state)
         {:noreply, state}
