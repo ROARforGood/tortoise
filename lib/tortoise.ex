@@ -63,6 +63,7 @@ defmodule Tortoise do
   alias Tortoise.Package
   alias Tortoise.Connection
   alias Tortoise.Connection.Inflight
+  require Logger
 
   @typedoc """
   An identifier used to identify the client on the server.
@@ -255,10 +256,10 @@ defmodule Tortoise do
                | {:identifier, package_identifier()}
                | {:timeout, non_neg_integer()}
   def publish(client_id, topic, payload \\ nil, opts \\ []) do
-    # IO.inspect(client_id, label: "#{inspect(__ENV__.function)} client_id===")
-    # IO.inspect(topic, label: "#{inspect(__ENV__.function)} topic ===")
-    # IO.inspect(payload, label: "#{inspect(__ENV__.function)} payload===")
-    # IO.inspect(opts, label: "#{inspect(__ENV__.function)} opts===")
+    Logger.info("MFA - {Tortoise, :publish, 4} client_id - #{inspect(client_id)}")
+    Logger.info("MFA - {Tortoise, :publish, 4} topic - #{inspect(topic)}")
+    Logger.info("MFA - {Tortoise, :publish, 4} payload - #{inspect(payload)}")
+    Logger.info("MFA - {Tortoise, :publish, 4} opts - #{inspect(opts)}")
     qos = Keyword.get(opts, :qos, 0)
 
     publish = %Package.Publish{

@@ -61,7 +61,7 @@ defmodule Tortoise.Connection.Controller do
 
   @spec ping(Tortoise.client_id()) :: {:ok, reference()}
   def ping(client_id) do
-    # IO.inspect(client_id, label: "#{inspect(__ENV__.function)} client_id ---")
+    Logger.info("MFA - {Controller, :ping, 1} client_id - #{inspect(client_id)}")
     ref = make_ref()
     :ok = GenServer.cast(via_name(client_id), {:ping, {self(), ref}})
     {:ok, ref}
@@ -69,7 +69,7 @@ defmodule Tortoise.Connection.Controller do
 
   @spec ping_sync(Tortoise.client_id(), timeout()) :: {:ok, reference()} | {:error, :timeout}
   def ping_sync(client_id, timeout \\ :infinity) do
-    # IO.inspect(timeout, label: "== ping_sync timeout ==")
+    Logger.info("MFA - {Controller, :ping_sync, 1} timeout - #{inspect(timeout)}")
     {:ok, ref} = ping(client_id)
 
     receive do
@@ -139,7 +139,7 @@ defmodule Tortoise.Connection.Controller do
   end
 
   def handle_cast({:ping, caller}, state) do
-    # IO.inspect(state, label: "#{inspect(__ENV__.function)} state ==")
+    Logger.info("MFA - {Controller, {:ping, caller}, 2} state - #{inspect(state)}")
     with {:ok, {transport, socket}} <- Connection.connection(state.client_id, {:timeout, 500}) do
       time = System.monotonic_time(:microsecond)
       apply(transport, :send, [socket, Package.encode(%Package.Pingreq{})])
@@ -319,12 +319,13 @@ defmodule Tortoise.Connection.Controller do
   # command ------------------------------------------------------------
   defp handle_package(%Pingresp{}, %State{ping: ping} = state)
        when is_nil(ping) or ping == {[], []} do
-    # IO.inspect(ping, label: "#{inspect(__ENV__.function)} ping ***")
+    Logger.info("inside guard is_nil(ping)")
+    Logger.info("MFA - {Controller, :handle_package, 2} ping - #{inspect(ping)}")
     {:noreply, state}
   end
 
   defp handle_package(%Pingresp{}, %State{ping: ping} = state) do
-    # IO.inspect(state, label: "#{inspect(__ENV__.function)} state ===")
+    Logger.info("MFA - {Controller, :handle_package, 2} ping - #{inspect(ping)}")
     {{:value, {{caller, ref}, start_time}}, ping} = :queue.out(ping)
     round_trip_time = System.monotonic_time(:microsecond) - start_time
     send(caller, {Tortoise, {:ping_response, ref, round_trip_time}})
