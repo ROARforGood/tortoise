@@ -49,8 +49,7 @@ defmodule Tortoise.Connection do
     client_id = Keyword.fetch!(connection_opts, :client_id)
     server = connection_opts |> Keyword.fetch!(:server) |> Transport.new()
     keep_alive = Keyword.get(connection_opts, :keep_alive, 60)
-    IO.inspect(__ENV__.function)
-    Logger.info("MFA - keep_alive - #{inspect(keep_alive)}")
+    Logger.info("MFA - start_link/2 keep_alive - #{inspect(keep_alive)}")
 
     connect = %Package.Connect{
       client_id: client_id,
@@ -468,8 +467,7 @@ defmodule Tortoise.Connection do
   end
 
   def handle_info(:ping, %State{} = state) do
-    IO.inspect(__ENV__.function)
-    Logger.info("MFA - state - #{inspect(state)}")
+    Logger.info("MFA - handle_info(:ping) state - #{inspect(state)}")
     case Controller.ping_sync(state.connect.client_id, 5000) do
       {:ok, round_trip_time} ->
         Logger.info("MFA - round_trip_time - #{inspect(round_trip_time)}")
