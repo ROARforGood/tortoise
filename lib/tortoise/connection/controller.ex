@@ -139,6 +139,7 @@ defmodule Tortoise.Connection.Controller do
   end
 
   def handle_cast({:ping, caller}, state) do
+    IO.inspect(state, label: "#{__ENV__.function} state ==")
     with {:ok, {transport, socket}} <- Connection.connection(state.client_id, {:timeout, 500}) do
       time = System.monotonic_time(:microsecond)
       apply(transport, :send, [socket, Package.encode(%Package.Pingreq{})])
@@ -318,10 +319,12 @@ defmodule Tortoise.Connection.Controller do
   # command ------------------------------------------------------------
   defp handle_package(%Pingresp{}, %State{ping: ping} = state)
        when is_nil(ping) or ping == {[], []} do
+    IO.inspect(ping, label: "#{__ENV__.function} ping ***")
     {:noreply, state}
   end
 
   defp handle_package(%Pingresp{}, %State{ping: ping} = state) do
+    IO.inspect(state, label: "#{__ENV__.function} state ===")
     {{:value, {{caller, ref}, start_time}}, ping} = :queue.out(ping)
     round_trip_time = System.monotonic_time(:microsecond) - start_time
     send(caller, {Tortoise, {:ping_response, ref, round_trip_time}})
