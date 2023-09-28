@@ -50,7 +50,7 @@ defmodule Tortoise.Connection do
     server = connection_opts |> Keyword.fetch!(:server) |> Transport.new()
 
     IO.inspect(Keyword.get(connection_opts, :keep_alive, 60),
-      label: "tortoise connection keep-alive ==="
+      label: "#{__ENV__.function} keep-alive ==="
     )
 
     connect = %Package.Connect{
@@ -469,6 +469,7 @@ defmodule Tortoise.Connection do
   end
 
   def handle_info(:ping, %State{} = state) do
+    IO.inspect(state, label: "#{__ENV__.function} state --=")
     case Controller.ping_sync(state.connect.client_id, 5000) do
       {:ok, round_trip_time} ->
         IO.inspect(round_trip_time, label: "#{__ENV__.function} round_trip_time ===")
