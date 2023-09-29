@@ -326,6 +326,7 @@ defmodule Tortoise.Connection do
           {:ok, {module(), term()}} | {:error, :unknown_connection} | {:error, :timeout}
         when opts: {:timeout, timeout()} | {:active, boolean()}
   def connection(client_id, opts \\ [active: false]) do
+    Logger.info("Connection.connection/2 opts ---- #{inspect(opts)}")
     # register a connection subscription in the case we are currently
     # in the connect phase; this solves a possible race condition
     # where the connection is requested while the status is
@@ -571,6 +572,7 @@ defmodule Tortoise.Connection do
   end
 
   defp reset_keep_alive(%State{keep_alive: nil} = state) do
+    Logger.info("MFA - Connection.reset_keep_alive/2 state - #{inspect(state)}")
     ref = Process.send_after(self(), :ping, state.connect.keep_alive * 1000)
     %State{state | keep_alive: ref}
   end
@@ -578,6 +580,7 @@ defmodule Tortoise.Connection do
   defp reset_keep_alive(%State{keep_alive: previous_ref} = state) do
     # Cancel the previous timer, just in case one was already set
     _ = Process.cancel_timer(previous_ref)
+    Logger.info("MFA - Connection.reset_keep_alive/2 state - #{inspect(state)}")
     ref = Process.send_after(self(), :ping, state.connect.keep_alive * 1000)
     %State{state | keep_alive: ref}
   end

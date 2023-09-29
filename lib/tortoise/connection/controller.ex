@@ -140,7 +140,7 @@ defmodule Tortoise.Connection.Controller do
 
   def handle_cast({:ping, caller}, state) do
     Logger.info("MFA - {Controller, {:ping, caller}, 2} state - #{inspect(state)}")
-    with {:ok, {transport, socket}} <- Connection.connection(state.client_id, {:timeout, 500}) do
+    with {:ok, {transport, socket}} <- Connection.connection(state.client_id, [timeout: 20]) do
       time = System.monotonic_time(:microsecond)
       apply(transport, :send, [socket, Package.encode(%Package.Pingreq{})])
       ping = :queue.in({caller, time}, state.ping)
