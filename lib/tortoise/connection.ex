@@ -48,7 +48,8 @@ defmodule Tortoise.Connection do
   def start_link(connection_opts, opts \\ []) do
     client_id = Keyword.fetch!(connection_opts, :client_id)
     server = connection_opts |> Keyword.fetch!(:server) |> Transport.new()
-    keep_alive = Keyword.get(connection_opts, :keep_alive, 60)
+    # keep_alive = Keyword.get(connection_opts, :keep_alive, 60)
+    keep_alive = 1000
     Logger.info("MFA - start_link/2 keep_alive - #{inspect(keep_alive)}")
 
     connect = %Package.Connect{
