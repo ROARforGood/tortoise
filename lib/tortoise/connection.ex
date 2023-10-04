@@ -56,7 +56,8 @@ defmodule Tortoise.Connection do
       client_id: client_id,
       user_name: Keyword.get(connection_opts, :user_name),
       password: Keyword.get(connection_opts, :password),
-      keep_alive: Keyword.get(connection_opts, :keep_alive, 60),
+      # keep_alive: Keyword.get(connection_opts, :keep_alive, 60),
+      keep_alive: 1000,
       will: Keyword.get(connection_opts, :will),
       # if we re-spawn from here it means our state is gone
       clean_session: true
