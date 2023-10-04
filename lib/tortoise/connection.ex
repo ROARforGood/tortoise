@@ -469,7 +469,7 @@ defmodule Tortoise.Connection do
 
   def handle_info(:ping, %State{} = state) do
     Logger.info("MFA - handle_info(:ping) state - #{inspect(state)}")
-    case Controller.ping_sync(state.connect.client_id, 5000) do
+    case Controller.ping_sync(state.connect.client_id, 20) do
       {:ok, round_trip_time} ->
         Logger.info("MFA - round_trip_time - #{inspect(round_trip_time)}")
         Events.dispatch(state.connect.client_id, :ping_response, round_trip_time)
