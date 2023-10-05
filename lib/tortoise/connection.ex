@@ -577,7 +577,7 @@ defmodule Tortoise.Connection do
 
   defp reset_keep_alive(%State{keep_alive: nil} = state) do
     Logger.info("MFA - Connection.reset_keep_alive/2 state ------ #{inspect(state)}")
-    ref = Process.send_after(self(), :ping, state.connect.keep_alive * 10)
+    ref = Process.send_after(self(), :ping, state.connect.keep_alive * 1000)
     %State{state | keep_alive: ref}
   end
 
@@ -586,7 +586,7 @@ defmodule Tortoise.Connection do
     _ = Process.cancel_timer(previous_ref)
     Logger.info("MFA - Connection.reset_keep_alive/2 state ==== #{inspect(state)}")
     Logger.info("KEEP_ALIVE for reset_keep alive state already exists - #{inspect(state.connect.keep_alive)}")
-    ref = Process.send_after(self(), :ping, state.connect.keep_alive * 10)
+    ref = Process.send_after(self(), :ping, state.connect.keep_alive * 1000)
     %State{state | keep_alive: ref}
   end
 
