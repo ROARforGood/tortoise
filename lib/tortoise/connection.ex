@@ -40,6 +40,7 @@ defmodule Tortoise.Connection do
                | {:user_name, String.t()}
                | {:password, String.t()}
                | {:keep_alive, non_neg_integer()}
+               | {:ping_frequency, non_neg_integer()}
                | {:will, Tortoise.Package.Publish.t()}
                | {:subscriptions,
                   [{Tortoise.topic_filter(), Tortoise.qos()}] | Tortoise.Package.Subscribe.t()}
@@ -74,7 +75,7 @@ defmodule Tortoise.Connection do
       end
 
     # @todo, validate that the handler is valid
-    connection_opts = Keyword.take(connection_opts, [:client_id, :handler])
+    connection_opts = Keyword.take(connection_opts, [:client_id, :handler, :ping_frequency])
     initial = {server, connect, backoff, subscriptions, connection_opts}
     opts = Keyword.merge(opts, name: via_name(client_id))
     GenServer.start_link(__MODULE__, initial, opts)
@@ -565,15 +566,25 @@ defmodule Tortoise.Connection do
     {:error, errors}
   end
 
+  defp ping_frequency(%State{} = state) do
+    case Keyword.get(state.opts, :ping_frequency) do
+      seconds when is_integer(seconds) ->
+        seconds * 1000
+
+      nil ->
+        state.connect.keep_alive * 1000
+    end
+  end
+
   defp reset_keep_alive(%State{keep_alive: nil} = state) do
-    ref = Process.send_after(self(), :ping, state.connect.keep_alive * 1000)
+    ref = Process.send_after(self(), :ping, ping_frequency(state))
     %State{state | keep_alive: ref}
   end
 
   defp reset_keep_alive(%State{keep_alive: previous_ref} = state) do
     # Cancel the previous timer, just in case one was already set
     _ = Process.cancel_timer(previous_ref)
-    ref = Process.send_after(self(), :ping, state.connect.keep_alive * 1000)
+    ref = Process.send_after(self(), :ping, ping_frequency(state))
     %State{state | keep_alive: ref}
   end
 
